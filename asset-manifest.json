@@ -1,0 +1,14 @@
+{
+  "files": {
+    "main.css": "/manage/static/css/main.4646c760.css",
+    "main.js": "/manage/static/js/main.054db74a.js",
+    "static/media/schedule.png": "/manage/static/media/schedule.08574752ed9e1ce7fa6e.png",
+    "index.html": "/manage/index.html",
+    "main.4646c760.css.map": "/manage/static/css/main.4646c760.css.map",
+    "main.054db74a.js.map": "/manage/static/js/main.054db74a.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.4646c760.css",
+    "static/js/main.054db74a.js"
+  ]
+}
