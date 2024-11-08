@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { useState } from "react";
 import { ProSidebar, Menu, MenuItem } from "react-pro-sidebar";
 import { Box, IconButton, Typography, useTheme } from "@mui/material";
@@ -5,21 +6,13 @@ import { Link } from "react-router-dom";
 import "react-pro-sidebar/dist/css/styles.css";
 import { tokens } from "../../theme";
 import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
-import PeopleOutlinedIcon from "@mui/icons-material/PeopleOutlined";
-import ContactsOutlinedIcon from "@mui/icons-material/ContactsOutlined";
-import ReceiptOutlinedIcon from "@mui/icons-material/ReceiptOutlined";
-import PersonOutlinedIcon from "@mui/icons-material/PersonOutlined";
-import CalendarTodayOutlinedIcon from "@mui/icons-material/CalendarTodayOutlined";
-import HelpOutlineOutlinedIcon from "@mui/icons-material/HelpOutlineOutlined";
-import BarChartOutlinedIcon from "@mui/icons-material/BarChartOutlined";
-import PieChartOutlineOutlinedIcon from "@mui/icons-material/PieChartOutlineOutlined";
-import TimelineOutlinedIcon from "@mui/icons-material/TimelineOutlined";
 import MenuOutlinedIcon from "@mui/icons-material/MenuOutlined";
-import MapOutlinedIcon from "@mui/icons-material/MapOutlined";
+import { useMediaQuery as useMediaQueryResponsive } from 'react-responsive';
 
 const Item = ({ title, to, icon, selected, setSelected }) => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
+
   return (
     <MenuItem
       active={selected === title}
@@ -38,43 +31,67 @@ const Item = ({ title, to, icon, selected, setSelected }) => {
 const Sidebar = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
-  const [isCollapsed, setIsCollapsed] = useState(false);
+  const [isCollapsed, setIsCollapsed] = useState(true);
   const [selected, setSelected] = useState("Dashboard");
+
+  // Media query for tablet
+  const isTablet = useMediaQueryResponsive({
+    query: '(min-width: 768px) and (max-width: 1023px)',
+  });
+
+  // Media query for mobile
+  const isMobile = useMediaQueryResponsive({
+    query: '(max-width: 767px)',
+  });
+  
+  // Combined condition to check for tablet or mobile
+  const collapsed = isTablet || isMobile || isCollapsed;
+
+  useEffect(() => {
+    // For mobile/tablet, set sidebar collapsed
+    if (isTablet || isMobile) {
+      setIsCollapsed(true);
+    } else {
+      setIsCollapsed(false); // For desktop, set sidebar expanded
+    }
+  }, [isTablet, isMobile]);
 
   return (
     <Box
-    sx={{
-      height: '1550px', // Set your desired height here
-      width: '300px',  // Set your desired width here
-      "& .pro-sidebar-inner": {
-        background: `${colors.primary[400]} !important`,
-      },
-      "& .pro-icon-wrapper": {
-        backgroundColor: "transparent !important",
-      },
-      "& .pro-inner-item": {
-        padding: "5px 35px 5px 20px !important",
-      },
-      "& .pro-inner-item:hover": {
-        color: "#868dfb !important",
-      },
-      "& .pro-menu-item.active": {
-        color: "#6870fa !important",
-      },
-    }}
-  >
-      <ProSidebar collapsed={isCollapsed}>
+      sx={{
+        height: '1550px',
+        width: '300px',
+        "& .pro-sidebar-inner": {
+          background: `${colors.primary[400]} !important`,
+        },
+        "& .pro-icon-wrapper": {
+          backgroundColor: "transparent !important",
+        },
+        "& .pro-inner-item": {
+          padding: "5px 35px 5px 20px !important",
+        },
+        "& .pro-inner-item:hover": {
+          color: "#868dfb !important",
+        },
+        "& .pro-menu-item.active": {
+          color: "#6870fa !important",
+        },
+      }}
+    >
+      <ProSidebar collapsed={collapsed}>
         <Menu iconShape="square">
           {/* LOGO AND MENU ICON */}
           <MenuItem
-            onClick={() => setIsCollapsed(!isCollapsed)}
-            icon={isCollapsed ? <MenuOutlinedIcon /> : undefined}
+            onClick={() => {if (!isTablet && !isMobile) {
+              setIsCollapsed(!isCollapsed); // Toggle only if it's not mobile/tablet
+            }}}
+            icon={collapsed ? <MenuOutlinedIcon /> : undefined}
             style={{
               margin: "10px 0 20px 0",
               color: colors.grey[100],
             }}
           >
-            {!isCollapsed && (
+            {!collapsed && (
               <Box
                 display="flex"
                 justifyContent="space-between"
@@ -84,14 +101,16 @@ const Sidebar = () => {
                 <Typography variant="h3" color={colors.grey[100]}>
                   ADMINIS
                 </Typography>
-                <IconButton onClick={() => setIsCollapsed(!isCollapsed)}>
+                <IconButton onClick={() => {if (!isTablet && !isMobile) {
+                  setIsCollapsed(!isCollapsed); // Toggle only if it's not mobile/tablet
+                }}}>
                   <MenuOutlinedIcon />
                 </IconButton>
               </Box>
             )}
           </MenuItem>
 
-          {!isCollapsed && (
+          {!collapsed && (
             <Box mb="25px">
               <Box display="flex" justifyContent="center" alignItems="center">
                 <img
@@ -111,14 +130,11 @@ const Sidebar = () => {
                 >
                  Marcos
                 </Typography>
-                <Typography variant="h5" color={colors.greenAccent[500]}>
-                  
-                </Typography>
               </Box>
             </Box>
           )}
    
-          <Box paddingLeft={isCollapsed ? undefined : "10%"}>
+          <Box paddingLeft={collapsed ? undefined : "10%"}>
              <Item
               title="Dashboard"
               to="/"
@@ -126,7 +142,7 @@ const Sidebar = () => {
               selected={selected}
               setSelected={setSelected}
             />
-           {/* <Typography
+             {/* <Typography
               variant="h6"
               color={colors.grey[300]}
               sx={{ m: "15px 0 5px 20px" }}
@@ -183,7 +199,7 @@ const Sidebar = () => {
               selected={selected}
               setSelected={setSelected}
             />
-          */}
+          
             <Typography
               variant="h6"
               color={colors.grey[300]}
@@ -218,7 +234,7 @@ const Sidebar = () => {
               icon={<MapOutlinedIcon />}
               selected={selected}
               setSelected={setSelected}
-            />
+            />*/}
           </Box>
         </Menu>
       </ProSidebar>

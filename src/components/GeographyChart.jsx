@@ -1,21 +1,45 @@
 import React, { useEffect, useState } from "react";
 import { ComposableMap, Geographies, Geography, Marker } from "react-simple-maps";
 import { PieChart } from "react-minimal-pie-chart";
-import geoData from "../geoData.json"; // Update this path to your actual geoJSON data file
+import geoData from "../geoData.json"; // Ensure this path is correct
 
 const GeographyChart = ({ isDashboard }) => {
   const [geoFeatures, setGeoFeatures] = useState([]);
   const [hoveredCountry, setHoveredCountry] = useState(null);
   const [clickedCountries, setClickedCountries] = useState([]);
-  const [scale, setScale] = useState(1);
+  const [scale, setScale] = useState(1.5); // Increased scale for a bigger map
   const [isDragging, setIsDragging] = useState(false);
   const [startPos, setStartPos] = useState({ x: 0, y: 0 });
-  const [translate, setTranslate] = useState([0, 0]);
+  const [translate, setTranslate] = useState([0, 0]); // Centered map position
 
   useEffect(() => {
     if (geoData.features) {
       setGeoFeatures(geoData.features);
-      console.log("Geo Features:", geoData.features);
+
+      const initialCountries = [
+        {
+          name: "Germany",
+          coordinates: [10, 51],
+          chartData: [
+            { title: "Category 1", value: 45, color: "#E38627" },
+            { title: "Category 2", value: 25, color: "#C13C37" },
+            { title: "Category 3", value: 30, color: "#6A2135" },
+          ],
+          randomValue: 78,
+        },
+        {
+          name: "France",
+          coordinates: [2.2, 46],
+          chartData: [
+            { title: "Category 1", value: 40, color: "#E38627" },
+            { title: "Category 2", value: 35, color: "#C13C37" },
+            { title: "Category 3", value: 25, color: "#6A2135" },
+          ],
+          randomValue: 85,
+        },
+      ];
+
+      setClickedCountries(initialCountries);
     }
   }, []);
 
@@ -45,14 +69,10 @@ const GeographyChart = ({ isDashboard }) => {
 
   const handleCountryClick = (geo) => {
     const countryName = geo.properties.NAME || geo.properties.name;
-    let coordinates;
-    if (geo.geometry.type === "Polygon") {
-      coordinates = geo.geometry.coordinates[0];
-    } else if (geo.geometry.type === "MultiPolygon") {
-      coordinates = geo.geometry.coordinates[0][0];
-    }
+    const coordinates = geo.geometry.type === "Polygon"
+      ? geo.geometry.coordinates[0][0]
+      : geo.geometry.coordinates[0][0][0];
 
-    const centroid = coordinates[0];
     const chartData = [
       { title: "Category 1", value: 40, color: "#E38627" },
       { title: "Category 2", value: 30, color: "#C13C37" },
@@ -63,7 +83,7 @@ const GeographyChart = ({ isDashboard }) => {
 
     setClickedCountries((prev) => [
       ...prev,
-      { name: countryName, coordinates: centroid, chartData, randomValue },
+      { name: countryName, coordinates, chartData, randomValue },
     ]);
   };
 
@@ -71,11 +91,10 @@ const GeographyChart = ({ isDashboard }) => {
     <div
       style={{
         position: "relative",
-        right: !isDashboard ? "-50px" : "20px",
-        top: !isDashboard ? "100px" : "-200px",
-        width: "400px",
-        height: "300px",
-        overflow: "hidden",
+        width: "100%",
+        height: "100%",
+        overflow: "auto",
+        cursor: isDragging ? "grabbing" : "grab",
       }}
       onWheel={handleWheel}
       onMouseDown={handleMouseDown}
@@ -84,59 +103,53 @@ const GeographyChart = ({ isDashboard }) => {
       onMouseLeave={handleMouseUp}
     >
       <ComposableMap
-        projectionConfig={{ scale: scale * 100 }}
-        width={400}
-        height={300}
+        projectionConfig={{ scale: scale * 150 }}
+        width={1000} // Increase width for larger map
+        height={800} // Increase height for larger map
         style={{
           transform: `translate(${translate[0]}px, ${translate[1]}px)`,
-          cursor: isDragging ? "grabbing" : "grab",
         }}
       >
         <Geographies geography={geoData}>
           {({ geographies }) =>
-            geographies.map((geo) => {
-              const { NAME, name } = geo.properties;
-              const countryName = NAME || name;
-
-              return (
-                <Geography
-                  key={geo.rsmKey}
-                  geography={geo}
-                  onMouseEnter={() => setHoveredCountry(countryName)}
-                  onMouseLeave={() => setHoveredCountry(null)}
-                  onClick={() => handleCountryClick(geo)}
-                  style={{
-                    default: { fill: "#D6D6DA" },
-                    hover: { fill: "#F53" },
-                    pressed: { fill: "#E42" },
-                  }}
-                />
-              );
-            })
+            geographies.map((geo) => (
+              <Geography
+                key={geo.rsmKey}
+                geography={geo}
+                onMouseEnter={() => setHoveredCountry(geo.properties.NAME || geo.properties.name)}
+                onMouseLeave={() => setHoveredCountry(null)}
+                onClick={() => handleCountryClick(geo)}
+                style={{
+                  default: { fill: "#D6D6DA" },
+                  hover: { fill: "#F53" },
+                  pressed: { fill: "#E42" },
+                }}
+              />
+            ))
           }
         </Geographies>
 
         {clickedCountries.map((country, index) => (
           <Marker key={index} coordinates={country.coordinates}>
-            <foreignObject x={-20} y={-20} width={40} height={40}>
+            <foreignObject x={-35} y={-35} width={70} height={70}>
               <PieChart
                 data={country.chartData}
-                style={{ width: "40px", height: "40px" }}
-                radius={20}
+                style={{ width: "70px", height: "70px" }} // Increased pie chart size
+                radius={30}
                 lineWidth={100}
               />
             </foreignObject>
-            
-            {/* Adjusted position for country name to reduce overlap */}
-            <text textAnchor="middle" y={15} style={{ fontSize: 10, fill: "black" }}>
+            <text
+              textAnchor="middle"
+              y={45}
+              style={{ fontSize: 16, fontWeight: "bold", fill: "black" }} // Larger font for labels
+            >
               {country.name}
             </text>
-
-            {/* Random number beside the pie chart */}
             <text
-              x={25} // Adjust X position as needed
-              y={25} // Adjust Y position to avoid overlap
-              style={{ fontSize: 10, fill: "blue" }}
+              x={40}
+              y={40}
+              style={{ fontSize: 16, fontWeight: "bold", fill: "blue" }} // Larger font for random value
             >
               {country.randomValue}
             </text>
@@ -170,9 +183,7 @@ const GeographyChart = ({ isDashboard }) => {
           flexDirection: "column",
         }}
       >
-        <button onClick={handleZoomIn} style={{ marginBottom: "5px" }}>
-          +
-        </button>
+        <button onClick={handleZoomIn} style={{ marginBottom: "5px" }}>+</button>
         <button onClick={handleZoomOut}>-</button>
       </div>
     </div>

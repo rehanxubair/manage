@@ -5,23 +5,20 @@ const data = [
   { uv: 4000 },
   { uv: 3000 },
   { uv: 2000 },
-  { uv: 2780 },
-  { uv: 1890 },
-  { uv: 2390 },
-  { uv: 3490 },
+  
 ];
 
 // Array of colors for each bar
-const colors = ['#FF0000', '#00FF00', '#0000FF', '#FFFF00', '#FF00FF', '#00FFFF', '#808080'];
+const colors = ['#FF0000' , '#0000FF' , '#808080'];
 
 export default class Example extends PureComponent {
   render() {
     return (
-      <ResponsiveContainer width="100%" height={300}> {/* Increased height for visibility */}
+      <ResponsiveContainer width="100%" height={100}> {/* Increased height for visibility */}
         <BarChart 
           data={data} 
           layout="vertical"   // Set layout to vertical for horizontal bars
-          margin={{ top: 20, right: 20, left: 20, bottom: 20 }}
+          margin={{ top: 10, right: 20, left: 20, bottom: 40 }}
         >
           <XAxis type="number" hide /> {/* Hide X-axis */}
           <Bar dataKey="uv" barSize={20}> {/* Set bar size */}

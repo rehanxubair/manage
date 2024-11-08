@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { PieChart, Pie, Sector, ResponsiveContainer, Cell } from 'recharts';
-
+import { useMediaQuery } from 'react-responsive';
 const data = [
   { name: 'Project Status', value: 14.0, color: '#D3D3D3' }, // Grey color
   { name: 'Remaining', value: 86.0, color: '#0088FE' }, // Blue color
@@ -51,13 +51,16 @@ const renderActiveShape = (props) => {
 
 const ProjectStatus = () => {
   const [activeIndex, setActiveIndex] = useState(0);
-
+  const isDesktop = useMediaQuery({ minWidth: 1024 });
+  const isTablet = useMediaQuery({ minWidth: 768, maxWidth: 1023 });
+  const isMobile = useMediaQuery({ maxWidth: 767 });
+  const leftPosition = isDesktop ? "-100px" : isTablet ? "-100px" : "-150px";
   const onPieEnter = (_, index) => {
     setActiveIndex(index);
   };
 
   return (
-    <div style={{ position: 'relative', left: '20px', top: '-100px', width: '600px', height: '600px' }}> {/* Adjust positioning here */}
+    <div style={{ position: 'relative', left: leftPosition, top: '-100px', width: '600px', height: '600px' }}> {/* Adjust positioning here */}
       <ResponsiveContainer width="100%" height="100%">
         <PieChart>
           <Pie
@@ -66,8 +69,8 @@ const ProjectStatus = () => {
             data={data}
             cx="50%"
             cy="50%"
-            innerRadius={100}
-            outerRadius={150}
+            innerRadius={50}
+            outerRadius={100}
             dataKey="value"
             onMouseEnter={onPieEnter}
           >

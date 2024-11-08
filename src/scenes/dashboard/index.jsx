@@ -22,6 +22,7 @@ import ErrorIcon from '@mui/icons-material/Error'; // Error icon
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import GlobalSalesByTopLocations from "../../components/GlobalSales";
 import ProjectStatus from "../../components/ProjectStatus";
+import { useMediaQuery } from 'react-responsive';
 const Dashboard = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
@@ -29,6 +30,14 @@ const Dashboard = () => {
   const [percentageChange, setPercentageChange] = useState("+0%");
   // const [movies, setMovies] = useState([])
   const [logo , setLogo] = "";
+  const isDesktop = useMediaQuery({ minWidth: 1024 });
+  const isTablet = useMediaQuery({ minWidth: 768, maxWidth: 1023 });
+  const isMobile = useMediaQuery({ maxWidth: 767 });
+    // Responsive styling values
+    const boxWidth = isDesktop ? "738px" : isTablet ? "600px" : "300px";
+    const boxHeight = isDesktop ? "170px" : isTablet ? "140px" : "100px";
+    const marginLeftValue = isDesktop ? "-780px" : isTablet ? "-400px" : "0px";
+    const marginTopValue = isMobile ? "0px" : "-5px";
   {/*const { data : followers, loading, error } = useFetch('https://freetestapi.com/api/v1/movies')
   const { data : revenue, loading : revenueLoading, error: revenueError } = useFetch('https://freetestapi.com/api/v1/movies')
   const { data : numbers, loading : numbersLoading, error: numbersError } = useFetch('https://freetestapi.com/api/v1/movies')
@@ -152,11 +161,12 @@ console.log('Movies',followers);*/}
        
         {/* ROW 2 */}
         <Box
-        marginTop = "350px"
-marginLeft= "10px"
+        position="absolute"
+        marginTop = {isDesktop ? "180px" : isTablet ? "180px" : "550px"}
+marginLeft= {isDesktop ? "370px" : isTablet ? "240px" : "-10px"}
 sx={{ backgroundColor: '#FFFFFF', borderRadius: '4px', outline : '#DFDFDF solid 1px'  }}
-width= "1100px"
-height="393px"
+width= {isDesktop ? "740px" : isTablet ? "730px" : "290px"}
+height={isDesktop ? "393px" : isTablet ? "393px" : "700px"}
 
 >       
         <ProjectStatus/>
@@ -218,24 +228,27 @@ overflow="auto"
 </Box> */}
 <Box 
         >
-          <Box height="500px" mt = "-350px" marginLeft="700px">
+          <Box 
+          marginLeft= {isDesktop ? "380px" : isTablet ? "380px" : "5px"}
+          mt = {isDesktop ? "-550px" : isTablet ? "-550px" : "-250px"}
+          height="1000px"   width={isDesktop ? "350px" : isTablet ? "350px" : "280px"}>
             <GeographyChart isDashboard />
           </Box>
         </Box>
         </Box>
+
+        
         {/* ROW 3 */}
      
         <Box
-          width = "353px"
-          height= "500px"
-          marginTop = "760px"
-          marginLeft = "-1120px"
+        position="absolute"
+          width = {isDesktop ? "353px" : isTablet ? "353px" : "290px"}
+          height= "350px"
+          marginTop = {isDesktop ? "-5px" : isTablet ? "-5px" : "180px"}
+          marginLeft = {isDesktop ? "5px" : isTablet ? "-120px" : "-10px"}
           sx={{ backgroundColor: '#FFFFFF', borderRadius: '4px', outline : '#DFDFDF solid 1px'  }}
           p="10px"
         >
-          <Typography variant="h5" fontWeight="600">
-          Email Statistics
-          </Typography>
           <Box
             display="flex"
             flexDirection="column"
@@ -243,24 +256,17 @@ overflow="auto"
             mt="25px"
           >
             <ProgressCircle size="125" />
-            <Typography
-              variant="h5"
-              color={colors.greenAccent[500]}
-              sx={{ mt: "15px" }}
-            >
-              $48,352 revenue generated
-            </Typography>
-            <Typography>Includes extra misc expenditures and costs</Typography>
           </Box>
         
         </Box>
        
         <Box
-          
-          width = "1100px"
-          height= "320px"
+          position="absolute"
+          width = {isDesktop ? "738px" : isTablet ? "730px" : "290px"}
+          height= "170px"
           sx={{ backgroundColor: '#FFFFFF', borderRadius: '4px', outline : '#DFDFDF solid 1px'  }}
-          marginLeft = "-1140px"
+          marginLeft = {isDesktop ? "370px" : isTablet ? "240px" : "-10px"}
+          mt = "-5px"
         >
           <Typography
             variant="h5"
@@ -274,10 +280,11 @@ overflow="auto"
           </Box>
         </Box>
         <Box
-        width = "731px"
-        height= "499px"
-        marginTop = "760px"
-        marginLeft = "-790px"
+        position="absolute"
+        width = {isDesktop ? "353px" : isTablet ? "353px" : "290px"}
+        height= {isDesktop ? "499px" : isTablet ? "499px" : "600px"}
+        marginTop = {isDesktop ? "350px" : isTablet ? "350px" : "1260px"}
+        marginLeft = {isDesktop ? "5px" : isTablet ? "-120px" : "-10px"}
         sx={{ backgroundColor: '#FFFFFF', borderRadius: '4px', outline : '#DFDFDF solid 1px'  }}
           
         >
